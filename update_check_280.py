@@ -209,7 +209,6 @@ class TEXT_OT_update_script_jump(bpy.types.Operator):
 
         if line > 0:
             bpy.ops.text.jump(line=line)
-            bpy.ops.text.select_set(1, 1, -1, -1)
         self.line = -1
 
         return {'FINISHED'}
