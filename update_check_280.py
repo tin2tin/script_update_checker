@@ -185,10 +185,13 @@ class TEXT_PT_show_update_script(bpy.types.Panel):
                 cline = it[0]
                 cname = it[1]
                 cword = it[2]
-                csuggestion = it[3]
                 layout = layout.column(align=True)
-                layout.alignment = 'LEFT'
-                layout.operator("text.update_script_jump", text=str(cline) + ": " + cword + " -> " + csuggestion).line=int(cline)
+                row = layout.row(align=True)
+                row.alignment = 'LEFT'
+                row.label(text="%4d:" % cline)
+                prop = row.operator("text.update_script_jump", text="%s -> %s" % (cword, csuggestion), emboss=False)
+                prop.line = int(cline)
+                row.label(text="")
 
 
 class TEXT_OT_update_script_jump(bpy.types.Operator):
