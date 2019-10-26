@@ -185,6 +185,7 @@ class TEXT_PT_show_update_script(bpy.types.Panel):
                 cline = it[0]
                 cname = it[1]
                 cword = it[2]
+                csuggestion = it[3]
                 layout = layout.column(align=True)
                 row = layout.row(align=True)
                 row.alignment = 'LEFT'
