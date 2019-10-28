@@ -38,7 +38,7 @@ bl_info = {
     "author": "nBurn, tin2tin",
     "version": (1, 0),
     "blender": (2, 80, 0),
-    "location": "Text Editor > Sidebar > Update Script",
+    "location": "Text Editor > Sidebar > Text > Update Script",
     "description": "Runs 2.80 update checks on current document",
     "warning": "",
     "wiki_url": "",
@@ -168,7 +168,7 @@ class TEXT_OT_update_script_button(bpy.types.Operator):
 class TEXT_PT_show_update_script(bpy.types.Panel):
     bl_space_type = 'TEXT_EDITOR'
     bl_region_type = 'UI'
-    bl_category = "Update Script"
+    bl_category = "Text"
     bl_label = "Update Script"
 
     @classmethod
@@ -189,9 +189,11 @@ class TEXT_PT_show_update_script(bpy.types.Panel):
                 layout = layout.column(align=True)
                 row = layout.row(align=True)
                 row.alignment = 'LEFT'
-                row.label(text="%4d:" % cline)
+                row.label(text="%4d " % cline)
                 prop = row.operator("text.update_script_jump", text="%s -> %s" % (cword, csuggestion), emboss=False)
                 prop.line = int(cline)
+                prop.cword = str(cword)
+                prop.csuggestion = str(csuggestion)
                 row.label(text="")
 
 
@@ -201,7 +203,8 @@ class TEXT_OT_update_script_jump(bpy.types.Operator):
     bl_label = "Update_script Jump"
 
     line: IntProperty(default=0, options={'HIDDEN'})
-    character: IntProperty(default=0, options={'HIDDEN'})
+    cword: StringProperty(default="", options={'HIDDEN'})
+    csuggestion: StringProperty(default="", options={'HIDDEN'})
 
     @classmethod
     def poll(cls, context):
@@ -209,10 +212,14 @@ class TEXT_OT_update_script_jump(bpy.types.Operator):
 
     def execute(self, context):
         line = self.line
-        character = self.character
+        cword = self.cword
+        csuggestion = self.csuggestion
 
         if line > 0:
             bpy.ops.text.jump(line=line)
+            bpy.context.space_data.find_text = cword
+            bpy.context.space_data.replace_text = csuggestion
+            bpy.ops.text.find()
         self.line = -1
 
         return {'FINISHED'}
