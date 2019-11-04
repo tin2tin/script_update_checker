@@ -36,7 +36,7 @@ this Software without prior written authorization.
 bl_info = {
     "name": "Update Script",
     "author": "nBurn, tin2tin",
-    "version": (1, 0),
+    "version": (1, 1),
     "blender": (2, 80, 0),
     "location": "Text Editor > Sidebar > Text > Update Script",
     "description": "Runs 2.80 update checks on current document",
@@ -67,9 +67,11 @@ TERMS = (
     ("scene.frame_set", "subframe"),
     (".proportional_edit", "use_proportional_edit"),
     ("proportional", "use_proportional_edit"),
-    (".prop", "text (keyword)"),
+    (".label(", ".label(text="),
     (".label", "align, text (keywords)"),
-    ("row", "align (keyword)"),
+    (".row(True)",".row(align=True)"),
+    (".row(False)",".row(align=False)"),
+#    ("row", "align (keyword)"),
     ("show_x_ray", "show_in_front"),
     ("popup_menu", "title (keyword)"),
     (".operator", "text (keyword)"),
@@ -109,13 +111,44 @@ TERMS = (
     ("snap_element", "snap_elements"),
     (".pivot_point", "transform_pivot_point"),
     ("header_text_set", "_set(None)"),
+    ("    bpy.utils.register_module(__name__)", """    for i in classes:
+        bpy.utils.register_class(i)"""),
+    ("    bpy.utils.unregister_module(__name__)", """    for i in classes:
+        bpy.utils.unregister_class(i)"""),
     ("register_module", "register_class"),
     #("bl_idname", "only needed for Operator"),
-    ("Property", ": (annotation)"),
-    ("Operator", "_OT"),
-    ("Panel", "_PT"),
-    ("Menu", "_MT"),
-    ("UIList", "_UL"),
+    #("Property", ": (annotation)"),
+    (" = StringProperty(", ": StringProperty("),
+    (" = BoolProperty(", ": BoolProperty("),
+    (" = BoolVectorProperty(", ": BoolVectorProperty("),
+    (" = CollectionProperty(", ": CollectionProperty("),
+    (" = EnumProperty(", ": EnumProperty("),
+    (" = FloatProperty(", ": FloatProperty("),
+    (" = FloatVectorProperty(", ": FloatVectorProperty("),
+    (" = IntProperty(", ": IntProperty("),
+    (" = IntVectorProperty(", ": IntVectorProperty("),
+    (" = PointerProperty(", ": PointerProperty("),
+    (" = RemoveProperty(", ": RemoveProperty("),
+    (" = bpy.props.StringProperty(", ": bpy.props.StringProperty("),
+    (" = bpy.props.BoolProperty(", ": bpy.props.BoolProperty("),
+    (" = bpy.props.BoolVectorProperty(", ": bpy.props.BoolVectorProperty("),
+    (" = bpy.props.CollectionProperty(", ": bpy.props.CollectionProperty("),
+    (" = bpy.props.EnumProperty(", ": bpy.props.EnumProperty("),
+    (" = bpy.props.FloatProperty(", ": bpy.props.FloatProperty("),
+    (" = bpy.props.FloatVectorProperty(", ": bpy.props.FloatVectorProperty("),
+    (" = bpy.props.IntProperty(", ": bpy.props.IntProperty("),
+    (" = bpy.props.IntVectorProperty(", ": bpy.props.IntVectorProperty("),
+    (" = bpy.props.PointerProperty(", ": bpy.props.PointerProperty("),
+    (" = bpy.props.RemoveProperty(", ": bpy.props.RemoveProperty("),
+    (".prop", "text (keyword)"),
+    ("Operator):", "UPPERCASE_OT_snake_case("),
+#    ("Operator", "_OT"),
+    ("Panel):", "UPPERCASE_PT_snake_case("),
+#    ("Panel", "_PT"),
+    ("Menu):", "UPPERCASE_MT_snake_case("),
+#    ("Menu", "_MT"),
+    ("UIList):", "UPPERCASE_UL_snake_case("),
+#    ("UIList", "_UL"),
     ("keymap_items", "name=name_arg"),
 )
 
@@ -165,6 +198,45 @@ class TEXT_OT_update_script_button(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class TEXT_OT_insert_classes_button(bpy.types.Operator):
+    """Insert collection of classes"""
+    bl_idname = "text.insert_classes"
+    bl_label = "Insert Classes"
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_object is not None
+
+    def execute(self, context):
+        st = context.space_data
+        txt = st.text.as_string()
+        if not txt: return []
+
+        classes = []
+        tipoclass = "class "
+
+        lines = str(txt).splitlines()
+
+        for i in range(len(lines)):
+            line = lines[i]
+
+            ### find classes
+            find = line.find(tipoclass)
+            if find==0:
+                class_name = line[len(tipoclass):line.find("(")]
+
+                classes.append(class_name)
+                #print(line, find, class_name)
+                continue
+        if len(classes):
+            sorted(classes)
+            bpy.ops.text.insert(text="classes = (\n")
+            for i in range(len(classes)):
+                bpy.ops.text.insert(text="    "+str(classes[i])+",\n")
+            bpy.ops.text.insert(text="    )\n")
+
+        return {'FINISHED'}
+
 class TEXT_PT_show_update_script(bpy.types.Panel):
     bl_space_type = 'TEXT_EDITOR'
     bl_region_type = 'UI'
@@ -179,6 +251,7 @@ class TEXT_PT_show_update_script(bpy.types.Panel):
         layout = self.layout
         st = context.space_data
         layout.operator("text.update_script_button")
+
         if bpy.types.Scene.update_script_name == bpy.context.space_data.text.filepath:
             items = bpy.types.Scene.update_script
             for it in items:
@@ -195,6 +268,7 @@ class TEXT_PT_show_update_script(bpy.types.Panel):
                 prop.cword = str(cword)
                 prop.csuggestion = str(csuggestion)
                 row.label(text="")
+        layout.operator("text.insert_classes")
 
 
 class TEXT_OT_update_script_jump(bpy.types.Operator):
@@ -229,6 +303,7 @@ classes = (
     TEXT_PT_show_update_script,
     TEXT_OT_update_script_jump,
     TEXT_OT_update_script_button,
+    TEXT_OT_insert_classes_button,
     )
 
 
