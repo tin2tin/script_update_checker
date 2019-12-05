@@ -2,9 +2,8 @@
 name: update_check_280.py
 author: nBurn
 description: Simple script to help prep 2.7x Blender addons for 2.80
-version: 0, 0, 0
+version: 0, 1, 2
 first released: 2019-09-08
-last updated: 2019-09-08
 UI added: 2019-10-26 by tin2tin
 
 LICENSE (MIT)
@@ -35,11 +34,11 @@ this Software without prior written authorization.
 
 bl_info = {
     "name": "Update Script",
-    "author": "nBurn, tin2tin",
-    "version": (1, 1),
+    "author": "nBurn, tin2tin, Pullusb",
+    "version": (1, 2),
     "blender": (2, 80, 0),
     "location": "Text Editor > Sidebar > Text > Update Script",
-    "description": "Runs 2.80 update checks on current document",
+    "description": "Runs 2.8+ update checks on current document",
     "warning": "",
     "wiki_url": "",
     "category": "Text Editor",
@@ -51,7 +50,65 @@ TERMS = (
     ("get_rna", "get_rna_type"),
     ("viewport_shade", "shading.type"),
     ("TOOLS", "UI"),
-    ("LAMP", "light"),
+    ("ZOOMIN", "ADD"),
+    ("ZOOMOUT", "REMOVE"),
+    ("NEW", "FILE_NEW"),
+    ("BBOX", "SHADING_BBOX"),
+    ("POTATO", "SHADING_TEXTURE"),
+    ("SMOOTH", "SHADING_RENDERED"),
+    ("SOLID", "SHADING_SOLID"),
+    ("WIRE", "SHADING_WIRE"),
+    ("ORTHO", "XRAY"),
+    ("BUTS", "PROPERTIES"),
+    ("IMAGE_COL", "IMAGE"),
+    ("OOPS", "OUTLINER"),
+    ("IPO", "GRAPH"),
+    ("SCRIPTWIN", "PREFERENCES"),
+    ("CURSOR", "PIVOT_CURSOR"),
+    ("ROTATECOLLECTION", "PIVOT_INDIVIDUAL"),
+    ("ROTATECENTER", "PIVOT_MEDIAN"),
+    ("ROTACTIVE", "PIVOT_ACTIVE"),
+    ("FULLSCREEN", "WINDOW"),
+    ("LAMP_DATA", "LIGHT_DATA"),
+    ("OUTLINER_OB_LAMP", "OUTLINER_OB_LIGHT"),
+    ("OUTLINER_DATA_LAMP", "OUTLINER_DATA_LIGHT"),
+    ("LAMP_POINT", "LIGHT_POINT"),
+    ("LAMP_SUN", "LIGHT_SUN"),
+    ("LAMP_SPOT", "LIGHT_SPOT"),
+    ("LAMP_HEMI", "LIGHT_HEMI"),
+    ("LAMP_AREA", "LIGHT_AREA"),
+    ("LAMP", "LIGHT"),
+    ("VISIBLE_IPO_ON", "HIDE_OFF"),
+    ("VISIBLE_IPO_OFF", "HIDE_ON"),
+    ("LINK_AREA", "LINKED"),  #removed
+    ("PLUG", "PLUGIN"),  #removed
+    ("LINK", "DOT"),  #removed
+    ("ORTHO", "VIEW_ORTHO"),  #removed
+    ("GAME", "Icon missing. Replace it."),
+    ("DOTSUP", "Icon missing. Replace it."),
+    ("DOTSDOWN", "Icon missing. Replace it."),
+    ("INLINK", "Icon missing. Replace it."),
+    ("EDIT", "Icon missing. Replace it."),
+    ("RADIO", "Icon missing. Replace it."),
+    ("GO_LEFT", "Icon missing. Replace it."),
+    ("TEMPERATURE", "Icon missing. Replace it."),
+    ("SNAP_SURFACE", "Icon missing. Replace it."),
+    ("MANIPUL", "Icon missing. Replace it."),
+    ("BORDER_LASSO", "Icon missing. Replace it."),
+    ("MAN_TRANS", "Icon missing. Replace it."),
+    ("MAN_ROT", "Icon missing. Replace it."),
+    ("MAN_SCALE", "Icon missing. Replace it."),
+    ("RENDER_REGION", "Icon missing. Replace it."),
+    ("RECOVER_AUTO", "Icon missing. Replace it."),
+    ("SAVE_COPY", "Icon missing. Replace it."),
+    ("OPEN_RECENT", "Icon missing. Replace it."),
+    ("LOAD_FACTORY", "Icon missing. Replace it."),
+    ("ALIGN", "Icon missing. Replace it."),
+    ("SPACE2", "Icon missing. Replace it."),
+    ("ROTATE", "Icon missing. Replace it."),
+    ("SAVE_AS", "Icon missing. Replace it."),
+    ("BORDER_RECT", "Icon missing. Replace it."),
+    ("ROTACTIVE", "Icon missing. Replace it."),
     ("Lamp", "light"),
     ("lamp", "light"),
     (".select", "obj.select_set()"),
@@ -62,16 +119,17 @@ TERMS = (
     #("evaluated_get", "foo"),
     ("evaluated_depsgraph_get", "evaluated_get"),
     ("data.meshes.remove", "to_mesh_clear"),
-    ("scene.objects.active", "context.active_object", "context.view_layer.objects.active"),
+    ("scene.objects.active", "context.active_object",
+     "context.view_layer.objects.active"),
     #("scene.object_bases", "view_layer.objects.active"),
     ("scene.frame_set", "subframe"),
     (".proportional_edit", "use_proportional_edit"),
     ("proportional", "use_proportional_edit"),
     (".label(", ".label(text="),
     (".label", "align, text (keywords)"),
-    (".row(True)",".row(align=True)"),
-    (".row(False)",".row(align=False)"),
-#    ("row", "align (keyword)"),
+    (".row(True)", ".row(align=True)"),
+    (".row(False)", ".row(align=False)"),
+    #    ("row", "align (keyword)"),
     ("show_x_ray", "show_in_front"),
     ("popup_menu", "title (keyword)"),
     (".operator", "text (keyword)"),
@@ -142,13 +200,13 @@ TERMS = (
     (" = bpy.props.RemoveProperty(", ": bpy.props.RemoveProperty("),
     (".prop", "text (keyword)"),
     ("Operator):", "UPPERCASE_OT_snake_case("),
-#    ("Operator", "_OT"),
+    #    ("Operator", "_OT"),
     ("Panel):", "UPPERCASE_PT_snake_case("),
-#    ("Panel", "_PT"),
+    #    ("Panel", "_PT"),
     ("Menu):", "UPPERCASE_MT_snake_case("),
-#    ("Menu", "_MT"),
+    #    ("Menu", "_MT"),
     ("UIList):", "UPPERCASE_UL_snake_case("),
-#    ("UIList", "_UL"),
+    #    ("UIList", "_UL"),
     ("keymap_items", "name=name_arg"),
 )
 
@@ -166,13 +224,28 @@ def check_files(txt):
     txt = str(txt)
     split_file = txt.split('\n')
 
+    #collect valid icon names
+    current_bl_icons = [
+        i
+        for i in bpy.types.UILayout.bl_rna.functions["prop"].parameters["icon"]
+        .enum_items.keys() if i != 'NONE'
+    ]
+
     for i, line in enumerate(split_file, 1):
         if line != '':
-            for t in TERMS:
-                if t[0] in line:
-                    print("%4d" % i, line, '||', t[0], '-', t[1])
-                    classes.append([int(i), line, t[0], t[1]])
-                    break
+            # Check for removed icons
+            icon = re.findall(r'icon\s{,2}=\s{,2}(?:\'|\")([A-Z_]+)(?:\'|\")', line)
+            if icon not in current_bl_icons and icon != []:
+                classes.append([int(i), line, icon[0], 'Icon missing. Replace it.'])
+                break
+            # Check for Terms
+            else:
+                for t in TERMS:
+                    if t[0] in line:
+                        #print("%4d" % i, line, '||', t[0], '-', t[1])
+                        classes.append([int(i), line, t[0], t[1]])
+                        break
+
     return classes
 
 
@@ -222,7 +295,7 @@ class TEXT_OT_insert_classes_button(bpy.types.Operator):
 
             ### find classes
             find = line.find(tipoclass)
-            if find==0:
+            if find == 0:
                 class_name = line[len(tipoclass):line.find("(")]
 
                 classes.append(class_name)
@@ -232,10 +305,11 @@ class TEXT_OT_insert_classes_button(bpy.types.Operator):
             sorted(classes)
             bpy.ops.text.insert(text="classes = (\n")
             for i in range(len(classes)):
-                bpy.ops.text.insert(text="    "+str(classes[i])+",\n")
+                bpy.ops.text.insert(text="    " + str(classes[i]) + ",\n")
             bpy.ops.text.insert(text="    )\n")
 
         return {'FINISHED'}
+
 
 class TEXT_PT_show_update_script(bpy.types.Panel):
     bl_space_type = 'TEXT_EDITOR'
@@ -251,6 +325,7 @@ class TEXT_PT_show_update_script(bpy.types.Panel):
         layout = self.layout
         st = context.space_data
         layout.operator("text.update_script_button")
+        box = layout.box()
 
         if bpy.types.Scene.update_script_name == bpy.context.space_data.text.filepath:
             items = bpy.types.Scene.update_script
@@ -259,11 +334,14 @@ class TEXT_PT_show_update_script(bpy.types.Panel):
                 cname = it[1]
                 cword = it[2]
                 csuggestion = it[3]
-                layout = layout.column(align=True)
-                row = layout.row(align=True)
+                box = box.column(align=True)
+                row = box.row(align=True)
                 row.alignment = 'LEFT'
                 row.label(text="%4d " % cline)
-                prop = row.operator("text.update_script_jump", text="%s -> %s" % (cword, csuggestion), emboss=False)
+                prop = row.operator(
+                    "text.update_script_jump",
+                    text="%s -> %s" % (cword, csuggestion),
+                    emboss=False)
                 prop.line = int(cline)
                 prop.cword = str(cword)
                 prop.csuggestion = str(csuggestion)
@@ -304,7 +382,7 @@ classes = (
     TEXT_OT_update_script_jump,
     TEXT_OT_update_script_button,
     TEXT_OT_insert_classes_button,
-    )
+)
 
 
 def register():
