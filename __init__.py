@@ -1,4 +1,5 @@
 '''
+Original authors notes:
 name: update_check_280.py
 author: nBurn
 description: Simple script to help prep 2.7x Blender addons for 2.80
@@ -33,12 +34,12 @@ this Software without prior written authorization.
 '''
 
 bl_info = {
-    "name": "Update Script",
+    "name": "Script Update Checker",
     "author": "nBurn, tin2tin, Pullusb",
-    "version": (1, 2),
-    "blender": (2, 80, 0),
+    "version": (1, 3, 0),
+    "blender": (3, 3, 0),
     "location": "Text Editor > Sidebar > Text > Update Script",
-    "description": "Runs 2.8+ update checks on current document",
+    "description": "Runs  on current document",
     "warning": "",
     "wiki_url": "",
     "category": "Text Editor",
@@ -208,6 +209,19 @@ TERMS = (
     ("UIList):", "UPPERCASE_UL_snake_case("),
     #    ("UIList", "_UL"),
     ("keymap_items", "name=name_arg"),
+
+    ## Replace obsolete bgl in 3.4
+    ("bgl.glEnable(bgl.GL_BLEND)", "gpu.state.blend_set('ALPHA')"),
+    ("bgl.glDisable(bgl.GL_BLEND)", "gpu.state.blend_set('NONE')"),
+    ("gpu.shader.from_builtin('2D_UNIFORM_COLOR')", "gpu.shader.from_builtin('POLYLINE_UNIFORM_COLOR')"),
+    ("gpu.shader.from_builtin('2D_SMOOTH_COLOR')", "gpu.shader.from_builtin('POLYLINE_SMOOTH_COLOR')"),
+    # ("bgl.glLineWidth(1)", "gpu.state.line_width_set(1.0)"),
+    ('regex.sub', r'bgl\.glLineWidth\(([a-zA-Z0-9]+)\)', 'gpu.state.line_width_set(\g<1>.0)'), # search bgl.glLineWidth(1)
+    # ("bgl.glLineWidth(size)", 'shader.uniform_float("lineWidth", size)'),
+    ('regex.sub', r"bgl\.glLineWidth\(([a-zA-Z0-9]+)\)", 'shader.uniform_float("lineWidth", \g<1>.0)'),
+    ('regex.sub', r"bgl\.glPointSize\([a-zA-Z0-9]+\)", """gpu.state.program_point_size_set(False)
+    gpu.state.point_size_set(\g<1>)"""),
+
 )
 
 #terms = str(TERMS).split('\n')
@@ -226,8 +240,7 @@ def check_files(txt):
 
     #collect valid icon names
     current_bl_icons = [
-        i
-        for i in bpy.types.UILayout.bl_rna.functions["prop"].parameters["icon"]
+        i for i in bpy.types.UILayout.bl_rna.functions["prop"].parameters["icon"]
         .enum_items.keys() if i != 'NONE'
     ]
 
@@ -237,10 +250,23 @@ def check_files(txt):
             icon = re.findall(r'icon\s{,2}=\s{,2}(?:\'|\")([A-Z_]+)(?:\'|\")', line)
             if icon not in current_bl_icons and icon != []:
                 classes.append([int(i), line, icon[0], 'Icon missing. Replace it.'])
-                break
+                # break
+            
             # Check for Terms
-            else:
-                for t in TERMS:
+            for t in TERMS:
+                if t[0].startswith('regex.'):
+                    pattern, repl = t[1], t[2]
+                    
+                    res = re.search(pattern, line):
+                    if not res:
+                        continue
+
+                    if t[0].endswith('sub'):
+                        string = res.group(0)
+                        suggestion = re.sub(pattern, repl, string)
+                        classes.append([int(i), line, string, suggestion])
+
+                else:
                     if t[0] in line:
                         #print("%4d" % i, line, '||', t[0], '-', t[1])
                         classes.append([int(i), line, t[0], t[1]])
