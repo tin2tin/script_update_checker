@@ -37,7 +37,7 @@ this Software without prior written authorization.
 bl_info = {
     "name": "Script Update Checker",
     "author": "nBurn, tin2tin, Pullusb",
-    "version": (1, 4, 0),
+    "version": (1, 4, 1),
     "blender": (3, 3, 0),
     "location": "Text Editor > Sidebar > Text > Update Script",
     "description": "Runs  on current document",
@@ -103,12 +103,21 @@ TERMS = [
     ("import bgl", ""),
     ("bgl.glEnable(bgl.GL_BLEND)", "gpu.state.blend_set('ALPHA')"),
     ("bgl.glDisable(bgl.GL_BLEND)", "gpu.state.blend_set('NONE')"),
+    ("bgl.glEnable(bgl.GL_DEPTH_TEST)", "gpu.state.depth_test_set('LESS_EQUAL')"),
+    ("bgl.glDisable(bgl.GL_DEPTH_TEST)", "gpu.state.depth_test_set('NONE')"),
+
     ("gpu.shader.from_builtin('2D_UNIFORM_COLOR')", "gpu.shader.from_builtin('POLYLINE_UNIFORM_COLOR')"),
     ("gpu.shader.from_builtin('2D_SMOOTH_COLOR')", "gpu.shader.from_builtin('POLYLINE_SMOOTH_COLOR')"),
+    
     # ("bgl.glLineWidth(1)", "gpu.state.line_width_set(1.0)"),
     ('regex.sub', r'bgl\.glLineWidth\(([a-zA-Z0-9]+)\)', 'gpu.state.line_width_set(\g<1>.0)'), # search bgl.glLineWidth(1)
+    
     # ("bgl.glLineWidth(size)", 'shader.uniform_float("lineWidth", size)'),
-    ('regex.sub', r"bgl\.glLineWidth\(([a-zA-Z0-9]+)\)", 'shader.uniform_float("lineWidth", \g<1>.0)'),
+    # ('regex.sub', r"bgl\.glLineWidth\(([a-zA-Z0-9]+)\)", 'shader.uniform_float("lineWidth", \g<1>.0)'),
+    
+    ## two line
+    # program_point_size_set: ifenabled, the derived point size is taken from the (potentially clipped) shader builtin gl_PointSize.
+    # point_size_set(size): Specify the diameter of rasterized points.
     ('regex.sub', r"bgl\.glPointSize\([a-zA-Z0-9]+\)", """gpu.state.program_point_size_set(False)
     gpu.state.point_size_set(\g<1>)"""),
 

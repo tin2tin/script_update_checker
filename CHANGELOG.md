@@ -1,5 +1,9 @@
 # Changelog
 
+1.4.1 - 2022-10-03
+
+- fixed: bgl to new gpu draw suggestions
+
 1.4.0 - 2022-10-01
 
 - added: checkbox to separate specific terms related to upgrade from 2.7
