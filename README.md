@@ -7,9 +7,9 @@ Find it in the Text Editor Sidebar.
 
 # How
 
-Place the script in question in the Text Editor and execute the operator in the sidebar. 
-All items with issues will be listed in the sidebar. 
-Click on an issue to go to that line. 
+1. Open the script in question in the Text Editor and execute the operator in the sidebar. 
+2. All items with issues will be listed in the sidebar. 
+3. Click on an issue to go to that line. 
 
 ## About
 
