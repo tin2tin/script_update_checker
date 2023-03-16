@@ -11,6 +11,8 @@ Place the script in question in the Text Editor and execute the operator in the 
 All items with issues will be listed in the sidebar. 
 Click on an issue to go to that line. 
 
+## About
+
 nBurn writes:
 "Add-on update helper script
 
