@@ -1,5 +1,15 @@
 # Script Update Checker
-Check scripts for functions which needs to be updated to Blender 2.80 API. Find it in the Text Editor Sidebar.
+Check scripts for functions which needs to be updated to the latest Blender.
+
+## Where
+
+Find it in the Text Editor Sidebar.
+
+# How
+
+Place the script in question in the Text Editor and execute the operator in the sidebar. 
+All items with issues will be listed in the sidebar. 
+Click on an issue to go to that line. 
 
 nBurn writes:
 "Add-on update helper script
