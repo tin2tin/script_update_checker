@@ -1,5 +1,11 @@
 # Changelog
 
+1.5.0 - 2024-06-07
+
+- added: button to create manifest.toml text from bl_info in opened text file
+- fixed: bad regex on one search/replace string
+- changed: code refactor
+
 1.4.1 - 2022-10-03
 
 - fixed: bgl to new gpu draw suggestions

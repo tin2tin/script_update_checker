@@ -12,6 +12,13 @@ Find it in the Text Editor Sidebar.
 3. Click on an issue to go to that line. 
 4. Fix the line.
 
+
+## Addtional feature
+
+In `Update Script` panel you will also find:
+- `Insert Classes` : Create a tuple listing *classes* names in current text at cursor position. 
+- `Convert bl_info to manifest` : Get infos from *bl_info* in current text and reformat for Blender 4.2+ Extensions info format. Text is added to clipboard, ready to paste in a `manifest.toml` file at the root of the addon.
+
 ## About
 
 nBurn writes:
