@@ -53,13 +53,16 @@ def bl_dict_to_manifest(bl_dict):
     text_list.append('type = "add-on"')
     
     text_list.append("""
-# Optional: add-ons can list which resources they will require:
+# Optional: add-ons can list which resources they will require and description:
 # * "files" (for access of any filesystem operations)
 # * "network" (for internet access)
 # * "clipboard" (to read and/or write the system clipboard)
 # * "camera" (to capture photos and videos)
 # * "microphone" (to capture audio)
 # permissions = ["files", "network"])
+# [permissions]
+# network = "Automatic download"
+# files = "Write json data"
 """)
 
     text_list.append(f'website = {bl_dict.get("doc_url")}')

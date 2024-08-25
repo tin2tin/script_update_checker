@@ -15,22 +15,30 @@ class TEXT_PT_show_update_ui(bpy.types.Panel):
         layout.operator("text.insert_classes")
         layout.operator("text.convert_bl_info_to_manifest", icon='COPYDOWN')
 
-        layout.prop(context.scene, 'check_27', text='Include Terms From Blender 2.7')
+        col = layout.column()
+        settings = context.scene.script_updater_props
+        col.label(text='Include Terms:')
+        col.prop(settings, 'check_27', text='From Blender 2.7')
+        col.prop(settings, 'check_annotation', text='Properties To Annotation')
+        col.prop(settings, 'check_gpv3', text='GPv2 to GPv3')
+        
         layout.operator("text.update_script_button")
         
-
+        # wm = bpy.context.window_manager
         if not hasattr(bpy.types.Scene, 'update_script'):
             return
-        if context.scene.update_script_name != bpy.context.space_data.text.filepath:
+        if context.scene.script_updater_props.script_name != bpy.context.space_data.text.filepath:
             return
 
         box = layout.box()
+        # items = wm.update_script
         items = context.scene.update_script
         for it in items:
-            cline = it[0]
-            cname = it[1]
-            cword = it[2]
-            csuggestion = it[3]
+            cline = it[0] # Line number
+            cname = it[1] # Original line
+            cword = it[2] # Matched words
+            csuggestion = it[3] # Replacement
+
             box = box.column(align=True)
             row = box.row(align=True)
             row.alignment = 'LEFT'

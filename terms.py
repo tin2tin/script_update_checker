@@ -11,36 +11,15 @@
 # it will be use to search and 'sub' the whole match with the string passed as third
 # captured groups, ex: \g<1> ,can be used to transfer elements from matched string.
 
-TERMS = [
 
+## Default terms
+TERMS = [
     #("scene.object_bases", "view_layer.objects.active"),
     ("INFO_MT_", "TOPBAR_MT_"),
     #("bl_idname", "only needed for Operator"),
-    #("Property", ": (annotation)"),
-    (" = StringProperty(", ": StringProperty("),
-    (" = BoolProperty(", ": BoolProperty("),
-    (" = BoolVectorProperty(", ": BoolVectorProperty("),
-    (" = CollectionProperty(", ": CollectionProperty("),
-    (" = EnumProperty(", ": EnumProperty("),
-    (" = FloatProperty(", ": FloatProperty("),
-    (" = FloatVectorProperty(", ": FloatVectorProperty("),
-    (" = IntProperty(", ": IntProperty("),
-    (" = IntVectorProperty(", ": IntVectorProperty("),
-    (" = PointerProperty(", ": PointerProperty("),
-    (" = RemoveProperty(", ": RemoveProperty("),
-    (" = bpy.props.StringProperty(", ": bpy.props.StringProperty("),
-    (" = bpy.props.BoolProperty(", ": bpy.props.BoolProperty("),
-    (" = bpy.props.BoolVectorProperty(", ": bpy.props.BoolVectorProperty("),
-    (" = bpy.props.CollectionProperty(", ": bpy.props.CollectionProperty("),
-    (" = bpy.props.EnumProperty(", ": bpy.props.EnumProperty("),
-    (" = bpy.props.FloatProperty(", ": bpy.props.FloatProperty("),
-    (" = bpy.props.FloatVectorProperty(", ": bpy.props.FloatVectorProperty("),
-    (" = bpy.props.IntProperty(", ": bpy.props.IntProperty("),
-    (" = bpy.props.IntVectorProperty(", ": bpy.props.IntVectorProperty("),
-    (" = bpy.props.PointerProperty(", ": bpy.props.PointerProperty("),
-    (" = bpy.props.RemoveProperty(", ": bpy.props.RemoveProperty("),
+
     # ("Operator):", "UPPERCASE_OT_snake_case("),
-    ### test on OPS (!no good, need conditions to be usefull!)
+    ### Test on OPS (!no good, need conditions to be usefull!)
     # ('regex.sub',
     #     r"(?:class )?([a-z]*)_([a-z]*)?(\((?:bpy\.types\.)?Operator\):)",
     #     lambda m: r'{}_OT_{}{}'.format(m.group(1).upper(), m.group(2), m.group(3))),
@@ -48,12 +27,42 @@ TERMS = [
     # ("Panel):", "UPPERCASE_PT_snake_case("),
     # ("Menu):", "UPPERCASE_MT_snake_case("),
     # ("UIList):", "UPPERCASE_UL_snake_case("),
-    #    ("Operator", "_OT"),
-    #    ("Panel", "_PT"),
-    #    ("Menu", "_MT"),
-    #    ("UIList", "_UL"),
+    # ("Operator", "_OT"),
+    # ("Panel", "_PT"),
+    # ("Menu", "_MT"),
+    # ("UIList", "_UL"),
+]
 
-    ## Replace obsolete bgl in 3.4
+## Propeties to annotations instead of assignmet in 3.0+
+TERMS_ANNOTATIONS = [
+    #("Property", ": (annotation)"),
+    ("= StringProperty(", ": StringProperty("),
+    ("= BoolProperty(", ": BoolProperty("),
+    ("= BoolVectorProperty(", ": BoolVectorProperty("),
+    ("= CollectionProperty(", ": CollectionProperty("),
+    ("= EnumProperty(", ": EnumProperty("),
+    ("= FloatProperty(", ": FloatProperty("),
+    ("= FloatVectorProperty(", ": FloatVectorProperty("),
+    ("= IntProperty(", ": IntProperty("),
+    ("= IntVectorProperty(", ": IntVectorProperty("),
+    ("= PointerProperty(", ": PointerProperty("),
+    ("= RemoveProperty(", ": RemoveProperty("),
+    ("= bpy.props.StringProperty(", ": bpy.props.StringProperty("),
+    ("= bpy.props.BoolProperty(", ": bpy.props.BoolProperty("),
+    ("= bpy.props.BoolVectorProperty(", ": bpy.props.BoolVectorProperty("),
+    ("= bpy.props.CollectionProperty(", ": bpy.props.CollectionProperty("),
+    ("= bpy.props.EnumProperty(", ": bpy.props.EnumProperty("),
+    ("= bpy.props.FloatProperty(", ": bpy.props.FloatProperty("),
+    ("= bpy.props.FloatVectorProperty(", ": bpy.props.FloatVectorProperty("),
+    ("= bpy.props.IntProperty(", ": bpy.props.IntProperty("),
+    ("= bpy.props.IntVectorProperty(", ": bpy.props.IntVectorProperty("),
+    ("= bpy.props.PointerProperty(", ": bpy.props.PointerProperty("),
+    ("= bpy.props.RemoveProperty(", ": bpy.props.RemoveProperty("),
+]
+
+
+TERMS_GPU = [
+    ## Replace obsolete bgl in 3.4+
     ("import bgl", ""),
     ("bgl.glEnable(bgl.GL_BLEND)", "gpu.state.blend_set('ALPHA')"),
     ("bgl.glDisable(bgl.GL_BLEND)", "gpu.state.blend_set('NONE')"),
@@ -74,7 +83,6 @@ TERMS = [
     # point_size_set(size): Specify the diameter of rasterized points.
     ('regex.sub', r"bgl\.glPointSize\(([a-zA-Z0-9]+)\)", """gpu.state.program_point_size_set(False)
     gpu.state.point_size_set(\g<1>)"""),
-
 ]
 
 TERMS_27 = [
@@ -188,6 +196,24 @@ TERMS_27 = [
     ('regex.quoted', "LINK", "DOT"),  #removed
     ('regex.quoted', "ORTHO", "VIEW_ORTHO"),  #removed
 ]
+
+
+## Update from GPv2 to GPv3 API in Blender 4.3
+TERMS_GP3 = [
+    (".info", ".name"), # Layer name
+    ('regex.sub', r"\.co(?!\w)", ".position"),
+    (".grease_pencil_modifiers", ".modifiers"), # Layer name
+    ('regex.quoted', "GPENCIL", "GREASEPENCIL"), # Type
+    ('regex.quoted', "PAINT_GPENCIL", "PAINT_GREASE_PENCIL"), # paint context
+    (".active_frame", ".current_frame()"),
+    (".strokes", ".drawing.strokes"),
+    (".use_cyclic", ".use_cyclic"),
+    ("_gpencil_", "_greasepencil_"),
+    ("strokes.new()", "-> drawing.add_curves()"),
+]
+    # ("VIEW3D_MT_gpencil_edit_context_menu", "VIEW3D_MT_greasepencil_edit_context_menu"),
+    ## All at once ?
+
 #terms = str(TERMS).split('\n')
 #for t in terms:
 #    print('("' + t + '", ' + '"foo"),')
