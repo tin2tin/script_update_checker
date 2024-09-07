@@ -1,5 +1,9 @@
 # Changelog
 
+1.7.0 - 2024-09-07
+
+- added: button to directly write the `blender_manifest.toml` aside `__init__.py` (ask to overwrite if already exists)
+
 1.6.0 - 2024-08-24
 
 - added: initial terms check for new grease pencil API (gpv2 -> gpv3) in Blender 4.3

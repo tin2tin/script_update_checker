@@ -13,7 +13,10 @@ class TEXT_PT_show_update_ui(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         layout.operator("text.insert_classes")
-        layout.operator("text.convert_bl_info_to_manifest", icon='COPYDOWN')
+        row = layout.row(align=True)
+
+        row.operator("text.convert_bl_info_to_manifest", text='bl_info to manifest', icon='COPYDOWN')
+        row.operator("text.convert_bl_info_to_manifest", text='Create Manifest File', icon='FILE_TICK').write_on_disk = True
 
         col = layout.column()
         settings = context.scene.script_updater_props
