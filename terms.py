@@ -208,6 +208,7 @@ TERMS_GP3 = [
     ('regex.quoted', "EDIT_GPENCIL", "EDIT_GREASE_PENCIL"), # edit context
     ('regex.quoted', "SCULPT_GPENCIL", "SCULPT_GREASE_PENCIL"), # sculpt context
     ('regex.quoted', "WEIGHT_GPENCIL", "WEIGHT_GREASE_PENCIL"), # weight context
+    ('regex.quoted', "GP_LATTICE", "'GREASE_PENCIL_LATTICE'"), # modifier
     (".active_frame", ".current_frame()"),
     (".strokes", ".drawing.strokes"),
     (".use_cyclic", ".use_cyclic"),
