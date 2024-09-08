@@ -205,10 +205,13 @@ TERMS_GP3 = [
     (".grease_pencil_modifiers", ".modifiers"), # Layer name
     ('regex.quoted', "GPENCIL", "GREASEPENCIL"), # Type
     ('regex.quoted', "PAINT_GPENCIL", "PAINT_GREASE_PENCIL"), # paint context
+    ('regex.quoted', "EDIT_GPENCIL", "EDIT_GREASE_PENCIL"), # edit context
+    ('regex.quoted', "SCULPT_GPENCIL", "SCULPT_GREASE_PENCIL"), # sculpt context
+    ('regex.quoted', "WEIGHT_GPENCIL", "WEIGHT_GREASE_PENCIL"), # weight context
     (".active_frame", ".current_frame()"),
     (".strokes", ".drawing.strokes"),
     (".use_cyclic", ".use_cyclic"),
-    ("_gpencil_", "_greasepencil_"),
+    ("_gpencil_", "_greasepencil_"), # only for class names, toolsettings are still gpencil !
     ("strokes.new()", "-> drawing.add_curves()"),
 ]
     # ("VIEW3D_MT_gpencil_edit_context_menu", "VIEW3D_MT_greasepencil_edit_context_menu"),
