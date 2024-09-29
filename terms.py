@@ -204,19 +204,25 @@ TERMS_GP3 = [
     ('regex.sub', r"\.co(?!\w)", ".position"),
     (".grease_pencil_modifiers", ".modifiers"), # Layer name
     ('regex.quoted', "GPENCIL", "GREASEPENCIL"), # Type
-    ('regex.quoted', "PAINT_GPENCIL", "PAINT_GREASE_PENCIL"), # paint context
+    ('regex.quoted', "PAINT_GPENCIL", "PAINT_GREASE_PENCIL"), # paint context # (Carefull: object.mode_set is not the same name anymore !)
     ('regex.quoted', "EDIT_GPENCIL", "EDIT_GREASE_PENCIL"), # edit context
     ('regex.quoted', "SCULPT_GPENCIL", "SCULPT_GREASE_PENCIL"), # sculpt context
     ('regex.quoted', "WEIGHT_GPENCIL", "WEIGHT_GREASE_PENCIL"), # weight context
     ('regex.quoted', "GP_LATTICE", "'GREASE_PENCIL_LATTICE'"), # modifier
     (".active_frame", ".current_frame()"),
     (".strokes", ".drawing.strokes"),
-    (".use_cyclic", ".use_cyclic"),
-    ("_gpencil_", "_greasepencil_"), # only for class names, toolsettings are still gpencil !
+    (".use_cyclic", ".cyclic"),
     ("strokes.new()", "-> drawing.add_curves()"),
+    (".use_multiedit", "-> context.scene.tool_settings.use_grease_pencil_multi_frame_editing"), # Not on GP data anymore !
+    ("strokes.remove(", "-> drawing.remove_strokes(indices=(0,)) # stroke index list"), # list of stroke index to remove
+    # ("regex.sub", r".*(?:points|strokes).update\(\))", r"\1# \2"), # comment lines with points.update() or stroke.update()
+    ("regex.sub", ".*points.update\(\)", ""), # no points update anymore, delete
+    ("regex.sub", ".*strokes.update\(\)", ""), # no strokes update anymore, delete
+    # ("_gpencil_", "_greasepencil_"), # only for class names, toolsettings are still gpencil !
 ]
     # ("VIEW3D_MT_gpencil_edit_context_menu", "VIEW3D_MT_greasepencil_edit_context_menu"),
     ## All at once ?
+    ## TODO: add isinstance(*stroke*, bpy.types.GpencilStroke) equivalent
 
 #terms = str(TERMS).split('\n')
 #for t in terms:
