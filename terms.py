@@ -158,9 +158,8 @@ TERMS_27 = [
         bpy.utils.unregister_class(i)"""),
     ("register_module", "register_class"),
     
-    ## old icons
-    ('regex.quoted', "TOOLS", "UI"), 
-    # equivalent to # ('regex.sub', r"('|\")TOOLS(\1)", "\g<1>UI\g<2>"),
+    ## Old icons
+    ('regex.quoted', "TOOLS", "UI"), # regex.quoted -> equivalent to # ('regex.sub', r"('|\")TOOLS(\1)", "\g<1>UI\g<2>"),
     ('regex.quoted', "ZOOMIN", "ADD"),
     ('regex.quoted', "ZOOMOUT", "REMOVE"),
     ('regex.quoted', "NEW", "FILE_NEW"),
@@ -199,10 +198,17 @@ TERMS_27 = [
 
 
 ## Update from GPv2 to GPv3 API in Blender 4.3
+## Order of the terms is important
 TERMS_GP3 = [
     (".info", ".name"), # Layer name
     ('regex.sub', r"\.co(?!\w)", ".position"),
-    (".grease_pencil_modifiers", ".modifiers"), # Layer name
+
+    ("bpy.ops.gpencil.vertex_group_assign()", "bpy.ops.object.vertex_group_assign()"),
+    # ("regex.sub", r"bpy\.ops\.object\.mode_set\(mode=('|\")EDIT_GPENCIL(\1)\)", "bpy.ops.object.mode_set(mode=\g<1>EDIT\g<2>)"), # version to match both quotes (not super clear)
+    ("bpy.ops.object.mode_set(mode='EDIT_GPENCIL')", "bpy.ops.object.mode_set(mode='EDIT')"), # single quote version
+    ('bpy.ops.object.mode_set(mode="EDIT_GPENCIL")', 'bpy.ops.object.mode_set(mode="EDIT")'), # double quote version
+    ('.gpencil_modifier', '.modifier'),
+    (".grease_pencil_modifiers", ".modifiers"),
     ('regex.quoted', "GPENCIL", "GREASEPENCIL"), # Type
     ('regex.quoted', "PAINT_GPENCIL", "PAINT_GREASE_PENCIL"), # paint context # (Carefull: object.mode_set is not the same name anymore !)
     ('regex.quoted', "EDIT_GPENCIL", "EDIT_GREASE_PENCIL"), # edit context
@@ -218,7 +224,11 @@ TERMS_GP3 = [
     # ("regex.sub", r".*(?:points|strokes).update\(\))", r"\1# \2"), # comment lines with points.update() or stroke.update()
     ("regex.sub", ".*points.update\(\)", ""), # no points update anymore, delete
     ("regex.sub", ".*strokes.update\(\)", ""), # no strokes update anymore, delete
-    # ("_gpencil_", "_greasepencil_"), # only for class names, toolsettings are still gpencil !
+
+    ("regex.sub", r"(bpy\.types\..*(?:M|P)T.*_)gpencil(_)", r"\g<1>greasepencil\g<2>"), # replace gpencil to greasepencil in bpy.types menu and panels
+    
+    # ("_gpencil_", "_greasepencil_"), # /!\ too generic for now: Only for class names, toolsettings are still gpencil ! 
+
 ]
     # ("VIEW3D_MT_gpencil_edit_context_menu", "VIEW3D_MT_greasepencil_edit_context_menu"),
     ## All at once ?

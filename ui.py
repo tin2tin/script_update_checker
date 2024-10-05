@@ -24,6 +24,7 @@ class TEXT_PT_show_update_ui(bpy.types.Panel):
         col.prop(settings, 'check_27', text='From Blender 2.7')
         col.prop(settings, 'check_annotation', text='Properties To Annotation')
         col.prop(settings, 'check_gpv3', text='GPv2 to GPv3')
+        col.prop(settings, 'check_icons', text='Icon Names')
         
         layout.operator("text.update_script_button")
         

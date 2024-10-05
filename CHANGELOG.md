@@ -1,5 +1,12 @@
 # Changelog
 
+1.8.0 - 2024-10-06
+
+- added: terms for GPv2 to GPv3
+- added: checkbox for icon verification toggle
+- fixed: broken detection for invalid icon
+- changed: 2.7 term search disabled by default
+
 1.7.0 - 2024-09-07
 
 - added: button to directly write the `blender_manifest.toml` aside `__init__.py` (ask to overwrite if already exists)

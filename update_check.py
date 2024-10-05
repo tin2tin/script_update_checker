@@ -31,6 +31,12 @@ def check_files(txt) -> list:
     split_file = txt.split('\n')
 
     # Collect valid icon names
+    ## Using identifier
+    # current_bl_icons = [i.identifier
+    #     for i in bpy.types.UILayout.bl_rna.functions['prop'].parameters['icon'].enum_items
+    #     if i.identifier != 'NONE']
+
+    ## Using .keys()
     current_bl_icons = [
         i for i in bpy.types.UILayout.bl_rna.functions["prop"].parameters["icon"]
         .enum_items.keys() if i != 'NONE'
@@ -38,11 +44,12 @@ def check_files(txt) -> list:
 
     for i, line in enumerate(split_file, 1):
         if line != '':
-            # Check for removed icons
-            icon = re.findall(r'icon\s{,2}=\s{,2}(?:\'|\")([A-Z_]+)(?:\'|\")', line)
-            if icon not in current_bl_icons and icon != []:
-                suggestions.append([int(i), line, icon[0], 'Icon missing. Replace it.'])
-                # break
+            if settings.check_icons:
+                # Check for removed icons
+                icon_list = re.findall(r'icon\s{,2}=\s{,2}(?:\'|\")([A-Z_]+)(?:\'|\")', line)
+                if icon_list and icon_list[0] not in current_bl_icons:
+                    suggestions.append([int(i), line, icon_list[0], 'Icon missing. Replace it.'])
+                    # break
 
             for t in term_list:
                 if t[0].startswith('regex.'):
@@ -170,7 +177,7 @@ class TEXT_OT_update_script_jump(bpy.types.Operator):
 
 class TEXT_PGT_script_update_checker_settings(bpy.types.PropertyGroup) :
     check_27 : BoolProperty(
-        name='Include 2.7 Terms', default=True,
+        name='Include 2.7 Terms', default=False,
         description='Search for terms specific to blender 2.7 version')
     
     check_annotation : BoolProperty(
@@ -180,6 +187,11 @@ class TEXT_PGT_script_update_checker_settings(bpy.types.PropertyGroup) :
     check_gpv3 : BoolProperty(
         name='GPv2 to GPv3', default=True,
         description='Grease pencil API from v2 to v3 (changed at Blender 4.3)')
+    
+    check_icons : BoolProperty(
+        name='Icons Name', default=True,
+        description='Check icon name\
+            \n(Should use the targeted Blender version for the script!)')
 
     script_name : bpy.props.StringProperty()
 
