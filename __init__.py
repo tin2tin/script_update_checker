@@ -36,10 +36,10 @@ this Software without prior written authorization.
 bl_info = {
     "name": "Script Update Checker",
     "author": "nBurn, tin2tin, Samuel Bernou",
-    "version": (1, 5, 0),
+    "version": (1, 8, 0),
     "blender": (3, 3, 0),
     "location": "Text Editor > Sidebar > Text > Update Script",
-    "description": "Runs cehck on current document",
+    "description": "Runs check on current document for updates",
     "warning": "",
     "wiki_url": "",
     "category": "Text Editor",

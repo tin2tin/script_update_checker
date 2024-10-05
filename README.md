@@ -17,7 +17,9 @@ Find it in the Text Editor Sidebar.
 
 In `Update Script` panel you will also find:
 - `Insert Classes` : Create a tuple listing *classes* names in current text at cursor position. 
-- `Convert bl_info to manifest` : Get infos from *bl_info* in current text and reformat for Blender 4.2+ Extensions info format. Text is added to clipboard, ready to paste in a `manifest.toml` file at the root of the addon.
+- `bl_info to manifest` : Get infos from *bl_info* in current text and reformat for Blender 4.2+ Extensions info format.  
+Text is added to clipboard, ready to paste in a `blender_manifest.toml` file at the root of the addon.  
+- `Create manifest file` : Directly write the `blender_manifest.toml` file on disk, in the same folder of the loaded text file (it will ask to overwrite if the manifest already exists)
 
 ## About
 

@@ -1,5 +1,22 @@
 # Changelog
 
+1.8.0 - 2024-10-06
+
+- added: terms for GPv2 to GPv3
+- added: checkbox for icon verification toggle
+- fixed: broken detection for invalid icon
+- changed: 2.7 term search disabled by default
+
+1.7.0 - 2024-09-07
+
+- added: button to directly write the `blender_manifest.toml` aside `__init__.py` (ask to overwrite if already exists)
+
+1.6.0 - 2024-08-24
+
+- added: initial terms check for new grease pencil API (gpv2 -> gpv3) in Blender 4.3
+- changed: separate terms toggle for propeties to annotations
+- fixed: permission terminology in manifest
+
 1.5.0 - 2024-06-07
 
 - added: button to create manifest.toml text from bl_info in opened text file

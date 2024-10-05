@@ -2,6 +2,8 @@
 
 import bpy
 import re
+
+from bpy.types import Context, OperatorProperties
 from .fn import current_text
 from pathlib import Path
 from time import strftime
@@ -53,13 +55,16 @@ def bl_dict_to_manifest(bl_dict):
     text_list.append('type = "add-on"')
     
     text_list.append("""
-# Optional: add-ons can list which resources they will require:
+# Optional: add-ons can list which resources they will require and description:
 # * "files" (for access of any filesystem operations)
 # * "network" (for internet access)
 # * "clipboard" (to read and/or write the system clipboard)
 # * "camera" (to capture photos and videos)
 # * "microphone" (to capture audio)
 # permissions = ["files", "network"])
+# [permissions]
+# network = "Automatic download"
+# files = "Write json data"
 """)
 
     text_list.append(f'website = {bl_dict.get("doc_url")}')
@@ -102,8 +107,46 @@ def bl_dict_to_manifest(bl_dict):
 class TEXT_OT_convert_bl_info_to_manifest(bpy.types.Operator):
     bl_idname = "text.convert_bl_info_to_manifest"
     bl_label = "convert bl_info to manifest"
-    bl_description = "Convert bl_info to manifest.toml format and save to clipboard"
+    bl_description = "Convert bl_info to blender_manifest.toml format and save to clipboard or create file"
     bl_options = {"REGISTER", "INTERNAL"}
+
+    write_on_disk : bpy.props.BoolProperty(default=False, options={'SKIP_SAVE'})
+
+    @classmethod
+    def description(cls, context, properties):
+        if properties.write_on_disk:
+            return f"Convert bl_info and save into a blender_manifest.toml file\
+                \nCurrent file needs to be saved on disk"
+        else:
+            return f"Convert bl_info in current file to a manifest formatting and save to clipboard\
+                \nNeed to be placed in a file blender_manifest.toml"
+
+    def invoke(self, context, event):
+        if not context.area.spaces.active.text:
+            self.report({'ERROR'}, 'No text in area')
+            return {"CANCELLED"}
+
+        if not self.write_on_disk:
+            return self.execute(context)
+        
+        if not context.area.spaces.active.text.filepath:
+            self.report({'ERROR'}, 'Current text is not saved on disk')
+            return {"CANCELLED"}
+        
+        self.manifest_path = Path(context.area.spaces.active.text.filepath).parent / 'blender_manifest.toml'
+        if self.manifest_path.exists():
+            return context.window_manager.invoke_props_dialog(self, width=500)
+            
+        return self.execute(context)
+    
+    def draw(self, context):
+        layout=self.layout
+        # layout.use_property_split = True
+        col = layout.column()
+        col.label(text='"blender_manifest.toml" file already exists !')
+        col.label(text="Overwrite file ?")
+        col.separator()
+        col.label(text=str(self.manifest_path))
 
     def execute(self, context):
         text = current_text(context)
@@ -117,11 +160,16 @@ class TEXT_OT_convert_bl_info_to_manifest(bpy.types.Operator):
             return {'CANCELLED'}
 
         manifest_text = bl_dict_to_manifest(bl_dict)
-        print('--- text to use in manifest.toml in addon root folder ---')
+        print('--- text to use in blender_manifest.toml in addon root folder ---')
         print(manifest_text)
-        
-        bpy.context.window_manager.clipboard = manifest_text
-        self.report({'INFO'}, 'Text saved to cliboard, paste in a "manifest.toml" file')
+
+        if self.write_on_disk:
+            with self.manifest_path.open('w') as fd:
+                fd.write(manifest_text)
+            self.report({'INFO'}, f'manifest file written at: {self.manifest_path}')
+        else:
+            bpy.context.window_manager.clipboard = manifest_text
+            self.report({'INFO'}, 'Text saved to cliboard, paste in a "blender_manifest.toml" file')
         return {"FINISHED"}
 
 classes = (

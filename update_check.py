@@ -2,16 +2,41 @@ import re, bpy
 from bpy.props import IntProperty, StringProperty, BoolProperty
 
 from .fn import current_text
-from .terms import TERMS, TERMS_27
+from .terms import TERMS, TERMS_27, TERMS_ANNOTATIONS, TERMS_GP3
 
 
 def check_files(txt) -> list:
+    '''Return a list of lists of search-replace match in text:
+    [line number (int), original full line, matched string, replacement suggestion]
+    '''
+
+    settings = bpy.context.scene.script_updater_props
+
+    # Build Terms
+    term_list = []
+    
+    term_list += TERMS
+
+    if settings.check_27:
+        term_list += TERMS_27
+
+    if settings.check_annotation:
+        term_list += TERMS_ANNOTATIONS
+
+    if settings.check_gpv3:
+        term_list += TERMS_GP3
 
     suggestions = []
     txt = str(txt)
     split_file = txt.split('\n')
 
     # Collect valid icon names
+    ## Using identifier
+    # current_bl_icons = [i.identifier
+    #     for i in bpy.types.UILayout.bl_rna.functions['prop'].parameters['icon'].enum_items
+    #     if i.identifier != 'NONE']
+
+    ## Using .keys()
     current_bl_icons = [
         i for i in bpy.types.UILayout.bl_rna.functions["prop"].parameters["icon"]
         .enum_items.keys() if i != 'NONE'
@@ -19,18 +44,12 @@ def check_files(txt) -> list:
 
     for i, line in enumerate(split_file, 1):
         if line != '':
-            # Check for removed icons
-            icon = re.findall(r'icon\s{,2}=\s{,2}(?:\'|\")([A-Z_]+)(?:\'|\")', line)
-            if icon not in current_bl_icons and icon != []:
-                suggestions.append([int(i), line, icon[0], 'Icon missing. Replace it.'])
-                # break
-            
-            # Check for Terms
-            if bpy.context.scene.check_27:
-                # add terms relative to upgrade from 2.7
-                term_list = TERMS + TERMS_27
-            else:
-                term_list = TERMS
+            if settings.check_icons:
+                # Check for removed icons
+                icon_list = re.findall(r'icon\s{,2}=\s{,2}(?:\'|\")([A-Z_]+)(?:\'|\")', line)
+                if icon_list and icon_list[0] not in current_bl_icons:
+                    suggestions.append([int(i), line, icon_list[0], 'Icon missing. Replace it.'])
+                    # break
 
             for t in term_list:
                 if t[0].startswith('regex.'):
@@ -46,13 +65,13 @@ def check_files(txt) -> list:
                     if not res:
                         continue
 
-                    print('pattern: ', pattern)
-                    print('repl: ', repl)
+                    # print('pattern: ', pattern) # Dbg
+                    # print('repl: ', repl) # Dbg
                     if t[0].split('.')[-1] in ('sub', 'quoted'):
                         string = res.group(0)
-                        print('string: ', string)
+                        # print('string: ', string) # Dbg
                         suggestion = re.sub(pattern, repl, string)
-                        print('suggestion: ', suggestion)
+                        # print('suggestion: ', suggestion) # Dbg
                         suggestions.append([int(i), line, string, suggestion])
                     
 
@@ -61,7 +80,6 @@ def check_files(txt) -> list:
                         #print("%4d" % i, line, '||', t[0], '-', t[1])
                         suggestions.append([int(i), line, t[0], t[1]])
                         break
-
     return suggestions
 
 
@@ -72,10 +90,18 @@ class TEXT_OT_update_script_button(bpy.types.Operator):
 
     def execute(self, context):
         filename = bpy.context.space_data.text.filepath
-        bpy.context.scene.update_script_name = filename
-        ## Create new attribute 
-        bpy.types.Scene.update_script = check_files(current_text(context))
+        bpy.context.scene.script_updater_props.script_name = filename
+        
+        ## Create new attribute
+        # wm = bpy.context.window_manager
+        # wm.update_script = check_files(current_text(context))
 
+        if hasattr(bpy.types.Scene, 'update_script'):
+            del bpy.types.Scene.update_script
+            # bpy.types.Scene.update_script.clear()
+        bpy.types.Scene.update_script = check_files(current_text(context))
+        print(len(context.scene.update_script))
+        # context.scene.update_script = check_files(current_text(context))
         return {'FINISHED'}
 
 
@@ -118,10 +144,18 @@ class TEXT_OT_update_script_jump(bpy.types.Operator):
     """Jump to line"""
     bl_idname = "text.update_script_jump"
     bl_label = "Update_script Jump"
+    bl_description = 'Click to set search replace on current word\
+    \nCtrl+Click for Direct replace'
 
-    line: IntProperty(default=0, options={'HIDDEN'})
-    cword: StringProperty(default="", options={'HIDDEN'})
-    csuggestion: StringProperty(default="", options={'HIDDEN'})
+    line : IntProperty(default=0, options={'HIDDEN'})
+    cword : StringProperty(default="", options={'HIDDEN'})
+    csuggestion : StringProperty(default="", options={'HIDDEN'})
+
+    replace : BoolProperty(default=False, options={'SKIP_SAVE'})
+
+    def invoke(self, context, event):
+        self.replace = event.ctrl
+        return self.execute(context)
 
     def execute(self, context):
         line = self.line
@@ -133,12 +167,37 @@ class TEXT_OT_update_script_jump(bpy.types.Operator):
             bpy.context.space_data.find_text = cword
             bpy.context.space_data.replace_text = csuggestion
             bpy.ops.text.find()
+            if self.replace:
+                bpy.ops.text.replace()
+                bpy.ops.text.jump(line=line)
         self.line = -1
 
         return {'FINISHED'}
 
 
+class TEXT_PGT_script_update_checker_settings(bpy.types.PropertyGroup) :
+    check_27 : BoolProperty(
+        name='Include 2.7 Terms', default=False,
+        description='Search for terms specific to blender 2.7 version')
+    
+    check_annotation : BoolProperty(
+        name='Prop To Annotations', default=True,
+        description='Search for properties assignement to annotation (= replaced by : on properties since blender 2.8)')
+    
+    check_gpv3 : BoolProperty(
+        name='GPv2 to GPv3', default=True,
+        description='Grease pencil API from v2 to v3 (changed at Blender 4.3)')
+    
+    check_icons : BoolProperty(
+        name='Icons Name', default=True,
+        description='Check icon name\
+            \n(Should use the targeted Blender version for the script!)')
+
+    script_name : bpy.props.StringProperty()
+
+
 classes = (
+    TEXT_PGT_script_update_checker_settings,
     TEXT_OT_update_script_jump,
     TEXT_OT_update_script_button,
     TEXT_OT_insert_classes_button,
@@ -146,24 +205,18 @@ classes = (
 
 
 def register():
-    bpy.types.Scene.check_27 = BoolProperty(
-        name='Include 2.7 Terms', default=True,
-        description='search for terms specific to blender 2.7 version')
-    
-    # bpy.types.Scene.update_script = bpy.props.StringProperty() # registered on the fly in operator
-    bpy.types.Scene.update_script_name = bpy.props.StringProperty()
     for cls in classes:
         bpy.utils.register_class(cls)
 
+    bpy.types.Scene.script_updater_props = bpy.props.PointerProperty(type = TEXT_PGT_script_update_checker_settings)
+
 
 def unregister():
-
     for cls in classes:
         bpy.utils.unregister_class(cls)
     
+    if hasattr(bpy.types.Scene, 'script_updater_props'):
+        del bpy.types.Scene.script_updater_props
+
     if hasattr(bpy.types.Scene, 'update_script'):
         del bpy.types.Scene.update_script
-
-    # if hasattr(bpy.types.Scene, 'update_script_name'):
-    del bpy.types.Scene.update_script_name
-    del bpy.types.Scene.check_27
