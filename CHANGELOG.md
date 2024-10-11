@@ -1,5 +1,10 @@
 # Changelog
 
+1.8.2 - 2024-10-11
+
+- added: GP v2->v3 modifier type strings
+- fixed: some error in new GPv3 API propnames
+
 1.8.0 - 2024-10-06
 
 - added: terms for GPv2 to GPv3

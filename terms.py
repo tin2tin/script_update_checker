@@ -202,7 +202,6 @@ TERMS_27 = [
 TERMS_GP3 = [
     (".info", ".name"), # Layer name
     ('regex.sub', r"\.co(?!\w)", ".position"),
-
     ("bpy.ops.gpencil.vertex_group_assign()", "bpy.ops.object.vertex_group_assign()"),
     # ("regex.sub", r"bpy\.ops\.object\.mode_set\(mode=('|\")EDIT_GPENCIL(\1)\)", "bpy.ops.object.mode_set(mode=\g<1>EDIT\g<2>)"), # version to match both quotes (not super clear)
     ("bpy.ops.object.mode_set(mode='EDIT_GPENCIL')", "bpy.ops.object.mode_set(mode='EDIT')"), # single quote version
@@ -214,25 +213,59 @@ TERMS_GP3 = [
     ('regex.quoted', "EDIT_GPENCIL", "EDIT_GREASE_PENCIL"), # edit context
     ('regex.quoted', "SCULPT_GPENCIL", "SCULPT_GREASE_PENCIL"), # sculpt context
     ('regex.quoted', "WEIGHT_GPENCIL", "WEIGHT_GREASE_PENCIL"), # weight context
-    ('regex.quoted', "GP_LATTICE", "'GREASE_PENCIL_LATTICE'"), # modifier
-    (".active_frame", ".current_frame([1])"), # sequence of int (number of points to add on each strokes)
-    (".strokes", ".drawing.strokes"),
+    ('regex.quoted', "VERTEX_GPENCIL", "VERTEX_GREASE_PENCIL"), # Vertex paint context
+    (".active_frame", ".current_frame()"),
+    ('regex.sub', r"(?<!drawing)\.strokes", ".drawing.strokes"),
     (".use_cyclic", ".cyclic"),
-    ("strokes.new()", "-> drawing.add_strokes()"),
+    ("strokes.new()", "-> drawing.add_strokes([0])"), # sequence of int: number of points to add on each strokes (GPv2 added a single stroke with 0 points)
     (".use_multiedit", "-> context.scene.tool_settings.use_grease_pencil_multi_frame_editing"), # Not on GP data anymore !
     ("strokes.remove(", "-> drawing.remove_strokes(indices=(0,)) # stroke index list"), # list of stroke index to remove
     # ("regex.sub", r".*(?:points|strokes).update\(\))", r"\1# \2"), # comment lines with points.update() or stroke.update()
-    ("regex.sub", ".*points.update\(\)", ""), # no points update anymore, delete
-    ("regex.sub", ".*strokes.update\(\)", ""), # no strokes update anymore, delete
-
-    ("regex.sub", r"(bpy\.types\..*(?:M|P)T.*_)gpencil(_)", r"\g<1>greasepencil\g<2>"), # replace gpencil to greasepencil in bpy.types menu and panels
-    
+    ("regex.sub", ".*points.update\(\)", ""), # No points update anymore, delete
+    ("regex.sub", ".*strokes.update\(\)", ""), # No strokes update anymore, delete
     # ("_gpencil_", "_greasepencil_"), # /!\ too generic for now: Only for class names, toolsettings are still gpencil ! 
 
+    ("regex.sub", r"(bpy\.types\..*(?:M|P)T.*_)gpencil(_)", r"\g<1>greasepencil\g<2>"), # replace gpencil to greasepencil in bpy.types menu and panels
+    # Modifiers
+    ('regex.quoted', "GP_WEIGHT_PROXIMITY", "GREASE_PENCIL_VERTEX_WEIGHT_PROXIMITY"),
+    ('regex.quoted', "GP_WEIGHT_ANGLE", "GREASE_PENCIL_VERTEX_WEIGHT_ANGLE"),
+    ('regex.quoted', "GP_LINEART", "LINEART"),
+    ('regex.quoted', "GP_THICK", "GREASE_PENCIL_THICKNESS"),
+    # ('regex.quoted', "SHRINKWRAP", "GREASE_PENCIL_SHRINKWRAP (for GP object)"), # Shrinkwarp type name was the same between GP and other object type !
 ]
     # ("VIEW3D_MT_gpencil_edit_context_menu", "VIEW3D_MT_greasepencil_edit_context_menu"),
     ## All at once ?
     ## TODO: add isinstance(*stroke*, bpy.types.GpencilStroke) equivalent
+
+## Modifiers with simple replace
+modifier_type_names = [
+    'LATTICE',
+    'NOISE',
+    'TIME',
+    'TEXTURE',
+    'DASH',
+    'ENVELOPE',
+    'LENGTH',
+    'MIRROR',
+    'MULTIPLY',
+    'OUTLINE',
+    'SIMPLIFY',
+    'SUBDIV',
+    'ARMATURE',
+    'HOOK',
+    'OFFSET',
+    'SMOOTH',
+    'COLOR',
+    'OPACITY',
+    'TINT',
+    'ARRAY',
+]
+
+for mod_name in modifier_type_names:
+    TERMS_GP3.append(
+        ('regex.quoted', f"GP_{mod_name}", f"GREASE_PENCIL_{mod_name}")
+    )
+
 
 #terms = str(TERMS).split('\n')
 #for t in terms:
