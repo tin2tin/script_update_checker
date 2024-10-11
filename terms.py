@@ -210,15 +210,15 @@ TERMS_GP3 = [
     ('.gpencil_modifier', '.modifier'),
     (".grease_pencil_modifiers", ".modifiers"),
     ('regex.quoted', "GPENCIL", "GREASEPENCIL"), # Type
-    ('regex.quoted', "PAINT_GPENCIL", "PAINT_GREASE_PENCIL"), # paint context # (Carefull: object.mode_set is not the same name anymore !)
+    ('regex.quoted', "PAINT_GPENCIL", "PAINT_GREASE_PENCIL"), # paint context
     ('regex.quoted', "EDIT_GPENCIL", "EDIT_GREASE_PENCIL"), # edit context
     ('regex.quoted', "SCULPT_GPENCIL", "SCULPT_GREASE_PENCIL"), # sculpt context
     ('regex.quoted', "WEIGHT_GPENCIL", "WEIGHT_GREASE_PENCIL"), # weight context
     ('regex.quoted', "GP_LATTICE", "'GREASE_PENCIL_LATTICE'"), # modifier
-    (".active_frame", ".current_frame()"),
+    (".active_frame", ".current_frame([1])"), # sequence of int (number of points to add on each strokes)
     (".strokes", ".drawing.strokes"),
     (".use_cyclic", ".cyclic"),
-    ("strokes.new()", "-> drawing.add_curves()"),
+    ("strokes.new()", "-> drawing.add_strokes()"),
     (".use_multiedit", "-> context.scene.tool_settings.use_grease_pencil_multi_frame_editing"), # Not on GP data anymore !
     ("strokes.remove(", "-> drawing.remove_strokes(indices=(0,)) # stroke index list"), # list of stroke index to remove
     # ("regex.sub", r".*(?:points|strokes).update\(\))", r"\1# \2"), # comment lines with points.update() or stroke.update()
