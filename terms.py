@@ -231,7 +231,11 @@ TERMS_GP3 = [
     ('regex.quoted', "GP_WEIGHT_ANGLE", "GREASE_PENCIL_VERTEX_WEIGHT_ANGLE"),
     ('regex.quoted', "GP_LINEART", "LINEART"),
     ('regex.quoted', "GP_THICK", "GREASE_PENCIL_THICKNESS"),
-    # ('regex.quoted', "SHRINKWRAP", "GREASE_PENCIL_SHRINKWRAP (for GP object)"), # Shrinkwarp type name was the same between GP and other object type !
+    ## /!\ Shrinkwarp type name was the same between GP and other object type ! risk and replace risk to match other objects !
+    # ('regex.quoted', "SHRINKWRAP", "GREASE_PENCIL_SHRINKWRAP (for GP object)"),
+    
+    # Keymap terms (not all are listed)
+    ('regex.quoted', "Grease Pencil Stroke Paint Mode", "Grease Pencil Paint Mode"),
 ]
     # ("VIEW3D_MT_gpencil_edit_context_menu", "VIEW3D_MT_greasepencil_edit_context_menu"),
     ## All at once ?
