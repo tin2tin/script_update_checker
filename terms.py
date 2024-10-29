@@ -236,6 +236,7 @@ TERMS_GP3 = [
     
     # Keymap terms (not all are listed)
     ('regex.quoted', "Grease Pencil Stroke Paint Mode", "Grease Pencil Paint Mode"),
+    ("bpy.ops.gpencil", "bpy.ops.grease_pencil"), # Operator category name
 ]
     # ("VIEW3D_MT_gpencil_edit_context_menu", "VIEW3D_MT_greasepencil_edit_context_menu"),
     ## All at once ?
