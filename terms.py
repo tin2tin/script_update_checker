@@ -217,6 +217,7 @@ TERMS_GP3 = [
     (".active_frame", ".current_frame()"),
     ('regex.sub', r"(?<!drawing)\.strokes", ".drawing.strokes"),
     (".use_cyclic", ".cyclic"),
+    (".matrix_layer", ".matrix_local"), # matrix_layer not is replaced by matrix_local
     ("strokes.new()", "-> drawing.add_strokes([0])"), # sequence of int: number of points to add on each strokes (GPv2 added a single stroke with 0 points)
     (".use_multiedit", "-> context.scene.tool_settings.use_grease_pencil_multi_frame_editing"), # Not on GP data anymore !
     ("strokes.remove(", "-> drawing.remove_strokes(indices=(0,)) # stroke index list"), # list of stroke index to remove
@@ -237,6 +238,7 @@ TERMS_GP3 = [
     # Keymap terms (not all are listed)
     ('regex.quoted', "Grease Pencil Stroke Paint Mode", "Grease Pencil Paint Mode"),
     ("bpy.ops.gpencil", "bpy.ops.grease_pencil"), # Operator category name
+    ("bpy.ops.gpencil", "bpy.ops.grease_pencil"),
 ]
     # ("VIEW3D_MT_gpencil_edit_context_menu", "VIEW3D_MT_greasepencil_edit_context_menu"),
     ## All at once ?
@@ -245,6 +247,7 @@ TERMS_GP3 = [
 ## Modifiers with simple replace
 modifier_type_names = [
     'LATTICE',
+    'BUILD',
     'NOISE',
     'TIME',
     'TEXTURE',
