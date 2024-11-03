@@ -227,7 +227,7 @@ TERMS_GP3 = [
     # ("_gpencil_", "_greasepencil_"), # /!\ too generic for now: Only for class names, toolsettings are still gpencil ! 
 
     ("regex.sub", r"(bpy\.types\..*(?:M|P)T.*_)gpencil(_)", r"\g<1>greasepencil\g<2>"), # replace gpencil to greasepencil in bpy.types menu and panels
-    # Modifiers
+    # Modifiers with changed name
     ('regex.quoted', "GP_WEIGHT_PROXIMITY", "GREASE_PENCIL_VERTEX_WEIGHT_PROXIMITY"),
     ('regex.quoted', "GP_WEIGHT_ANGLE", "GREASE_PENCIL_VERTEX_WEIGHT_ANGLE"),
     ('regex.quoted', "GP_LINEART", "LINEART"),
@@ -235,6 +235,13 @@ TERMS_GP3 = [
     ## /!\ Shrinkwarp type name was the same between GP and other object type ! risk and replace risk to match other objects !
     # ('regex.quoted', "SHRINKWRAP", "GREASE_PENCIL_SHRINKWRAP (for GP object)"),
     
+    
+    ## modifier filter name (3 most probable names)
+    ("mod.layer", "mod.layer_filter"),
+    ("modifier.layer", "modifier.layer_filter"),
+    ("mod.layer", "mod.layer_filter"),
+    ("m.layer", "m.layer_filter"),
+
     # Keymap terms (not all are listed)
     ('regex.quoted', "Grease Pencil Stroke Paint Mode", "Grease Pencil Paint Mode"),
     ("bpy.ops.gpencil", "bpy.ops.grease_pencil"), # Operator category name
@@ -244,7 +251,7 @@ TERMS_GP3 = [
     ## All at once ?
     ## TODO: add isinstance(*stroke*, bpy.types.GpencilStroke) equivalent
 
-## Modifiers with simple replace
+## Modifiers with simple prefix swap
 modifier_type_names = [
     'LATTICE',
     'BUILD',
