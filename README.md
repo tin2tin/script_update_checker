@@ -30,8 +30,8 @@ Changes and API equivalences are listed in the [official GP migration page](http
 The addons works well with the search & replace to update parts of yours script, but of course it does not cover all the things to change.
 
 Also, you might want to affect multiple files at once using an external IDE.  
-So here is a list of search and replaces _regexes_ + extra notes as a complement migration page.  
-It's still recommended to apply the replaces one by one to avoid false-positive matches.  
+So here is a list of search and replaces, _regexes_ and extra notes as a complement for the official migration page.  
+It's still recommended to apply the replaces one by one to avoid false-positive replace.  
 
 > Note: This is provided "as is", no one is responsible if there are error or if it breaks your script ;)
 
