@@ -46,7 +46,20 @@ class TEXT_PT_show_update_ui(bpy.types.Panel):
             box = box.column(align=True)
             row = box.row(align=True)
             row.alignment = 'LEFT'
+
+            ## button to replace
+            # prop = row.operator(
+            #     "text.update_script_jump",
+            #     text="", icon='BACK', emboss=False) # EVENT_LEFT_ARROW
+            # prop.line = int(cline)
+            # prop.cword = str(cword)
+            # prop.csuggestion = str(csuggestion)
+            # prop.replace = True
+
+            # line
             row.label(text="%4d " % cline)
+
+            ## suggestion and 
             prop = row.operator(
                 "text.update_script_jump",
                 text="%s -> %s" % (cword, csuggestion),
@@ -54,7 +67,9 @@ class TEXT_PT_show_update_ui(bpy.types.Panel):
             prop.line = int(cline)
             prop.cword = str(cword)
             prop.csuggestion = str(csuggestion)
-            row.label(text="")
+            
+
+            # row.label(text="")
 
 classes = (
     TEXT_PT_show_update_ui,
