@@ -1,5 +1,13 @@
 # Changelog
 
+1.9.0 - 2024-12-05
+
+- added: auto-refresh mode, refresh check after a replace. allowing to work way faster, alternating click and ctrl+click without moving mouse.
+- added: undo step push when replacing a term when using replace(safer, allow to ctrl+Z if it was not intended)
+- added: line number are now a button you can click on to directly jump and replace (same as Ctrl+Click on text)
+- added: feedback text when there are no match
+- added: Dynamic jump/replace operator descriptions + an _info note_ button to explain how to use on hover/click
+
 1.8.2 - 2024-10-11
 
 - added: GP v2->v3 modifier type strings
