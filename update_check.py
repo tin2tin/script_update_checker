@@ -5,15 +5,6 @@ from bpy.types import Context, OperatorProperties
 from .fn import current_text
 from .terms import TERMS, TERMS_27, TERMS_ANNOTATIONS, TERMS_GP3
 
-## Code to use property group instead of list to store search-replace items
-## (would allow to change "done" value, and show what ahs been replaced, but maybe overkill to add now...)
-# class TEXT_PGT_update_script_item(bpy.types.PropertyGroup):
-#     line_number : IntProperty(name="Line Number", default=0)
-#     line : StringProperty(name="Line", default="")
-#     search : StringProperty(name="Search", default="")
-#     replace : StringProperty(name="Replace", default="")
-#     done : BoolProperty(name="Done", default=False,
-#                         description="Show if the term has been replaced")
 
 def check_files(txt) -> list:
     '''Return a list of lists of search-replace match in text:
@@ -225,6 +216,17 @@ class TEXT_PGT_script_update_checker_settings(bpy.types.PropertyGroup) :
 
     script_name : bpy.props.StringProperty()
 
+'''
+## Code to use property group instead of list to store search-replace items
+## (would allow to change "done" value, and show what ahs been replaced, but maybe overkill to add now...)
+class TEXT_PGT_update_script_item(bpy.types.PropertyGroup):
+    line_number : IntProperty(name="Line Number", default=0)
+    line : StringProperty(name="Line", default="")
+    search : StringProperty(name="Search", default="")
+    replace : StringProperty(name="Replace", default="")
+    done : BoolProperty(name="Done", default=False,
+                        description="Show if the term has been replaced")
+'''
 
 classes = (
     # TEXT_PGT_update_script_item, # unused
