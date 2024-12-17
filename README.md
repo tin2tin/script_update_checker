@@ -24,8 +24,16 @@ Text is added to clipboard, ready to paste in a `blender_manifest.toml` file at 
 
 Following the full rewrite of Grease pencil shipped in Blender 4.3+, the API terms updater include search and replaces for Grease pencil V2 to V3.
  
-Changes and API equivalences are listed in the [official GP migration page](https://developer.blender.org/docs/release_notes/4.3/grease_pencil_migration/).  
+### Some links related to Grease pencil V3
 
+Changes and API equivalences are listed in the [official GP migration page](https://developer.blender.org/docs/release_notes/4.3/grease_pencil_migration/).
+
+The examples in [using attribute page](https://docs.blender.org/api/4.3/bpy.types.Attribute.html#using-attributes) are really useful now that Grease Pencil fully uses attributes (allowing use in geometry nodes)
+
+The [architecture internal attribute page](https://developer.blender.org/docs/features/grease_pencil/architecture/#internal-attributes) depicts the structure of Grease pencil V3
+
+
+## Extra migration helpers
 
 The addons works well with the search & replace to update parts of yours script, but of course it does not cover all the things to change.
 
