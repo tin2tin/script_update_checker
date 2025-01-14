@@ -1,5 +1,6 @@
 import re, bpy
 from bpy.props import IntProperty, StringProperty, BoolProperty
+from bpy.types import Context, OperatorProperties
 
 from .fn import current_text
 from .terms import TERMS, TERMS_27, TERMS_ANNOTATIONS, TERMS_GP3
@@ -87,6 +88,7 @@ class TEXT_OT_update_script_button(bpy.types.Operator):
     """Run Update Script"""
     bl_idname = "text.update_script_button"
     bl_label = "Run Update Script Check"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         filename = bpy.context.space_data.text.filepath
@@ -144,8 +146,8 @@ class TEXT_OT_update_script_jump(bpy.types.Operator):
     """Jump to line"""
     bl_idname = "text.update_script_jump"
     bl_label = "Update_script Jump"
-    bl_description = 'Click to set search replace on current word\
-    \nCtrl+Click for Direct replace'
+    bl_description = 'Click to set search replace on current word + suggestion pair\
+    \nCtrl+Click for Ddrect replace and add undo'
 
     line : IntProperty(default=0, options={'HIDDEN'})
     cword : StringProperty(default="", options={'HIDDEN'})
@@ -153,8 +155,16 @@ class TEXT_OT_update_script_jump(bpy.types.Operator):
 
     replace : BoolProperty(default=False, options={'SKIP_SAVE'})
 
+    @classmethod
+    def description(cls, context, properties) -> str:
+        if properties.replace:
+            return 'Click to replace current (same as Ctrl + Click on suggestion)'
+        return cls.bl_description
+
     def invoke(self, context, event):
-        self.replace = event.ctrl
+        if not self.replace:
+            # if not forced, check if ctrl is pressed
+            self.replace = event.ctrl
         return self.execute(context)
 
     def execute(self, context):
@@ -170,6 +180,13 @@ class TEXT_OT_update_script_jump(bpy.types.Operator):
             if self.replace:
                 bpy.ops.text.replace()
                 bpy.ops.text.jump(line=line)
+
+                ## add undo step if replace is done and auto_refresh is off
+                bpy.ops.ed.undo_push(message=f"Replace {cword} by {csuggestion}")
+
+                if bpy.context.scene.script_updater_props.auto_refresh:
+                    bpy.ops.text.update_script_button()
+
         self.line = -1
 
         return {'FINISHED'}
@@ -193,10 +210,26 @@ class TEXT_PGT_script_update_checker_settings(bpy.types.PropertyGroup) :
         description='Check icon name\
             \n(Should use the targeted Blender version for the script!)')
 
+    auto_refresh : BoolProperty(
+        name='Auto Refresh', default=True,
+        description='Automatically re-run the script when a replace has been made using operator')
+
     script_name : bpy.props.StringProperty()
 
+'''
+## Code to use property group instead of list to store search-replace items
+## (would allow to change "done" value, and show what ahs been replaced, but maybe overkill to add now...)
+class TEXT_PGT_update_script_item(bpy.types.PropertyGroup):
+    line_number : IntProperty(name="Line Number", default=0)
+    line : StringProperty(name="Line", default="")
+    search : StringProperty(name="Search", default="")
+    replace : StringProperty(name="Replace", default="")
+    done : BoolProperty(name="Done", default=False,
+                        description="Show if the term has been replaced")
+'''
 
 classes = (
+    # TEXT_PGT_update_script_item, # unused
     TEXT_PGT_script_update_checker_settings,
     TEXT_OT_update_script_jump,
     TEXT_OT_update_script_button,
