@@ -280,8 +280,58 @@ for mod_name in modifier_type_names:
     TERMS_GP3.append(
         ('regex.quoted', f"GP_{mod_name}", f"GREASE_PENCIL_{mod_name}")
     )
+     # Layer name
 
-
+TERMS_SEQUENCER = [
+    ("types.Sequence", "types.Strip"),
+    ("EffectSequence", "EffectStrip"),
+    ("AddSequence", "AddStrip"),
+    ("AdjustmentSequence", "AdjustmentStrip"),
+    ("AlphaOverSequence", "AlphaOverStrip"),
+    ("AlphaUnderSequence", "AlphaUnderStrip"),
+    ("ColorMixSequence", "ColorMixStrip"),
+    ("ColorSequence", "ColorStrip"),
+    ("CrossSequence", "CrossStrip"),
+    ("GammaCrossSequence", "GammaCrossStrip"),
+    ("GaussianBlurSequence", "GaussianBlurStrip"),
+    ("GlowSequence", "GlowStrip"),
+    ("MulticamSequence", "MulticamStrip"),
+    ("MultiplySequence", "MultiplyStrip"),
+    ("OverDropSequence", "OverDropStrip"),
+    ("SpeedControlSequence", "SpeedControlStrip"),
+    ("SubtractSequence", "SubtractStrip"),
+    ("TextSequence", "TextStrip"),
+    ("TransformSequence", "TransformStrip"),
+    ("WipeSequence", "WipeStrip"),
+    ("ImageSequence", "ImageStrip"),
+    ("MaskSequence", "MaskStrip"),
+    ("MetaSequence", "MetaStrip"),
+    ("MovieClipSequence", "MovieClipStrip"),
+    ("MovieSequence", "MovieStrip"),
+    ("SceneSequence", "SceneStrip"),
+    ("SoundSequence", "SoundStrip"),
+    ("SequenceColorBalanceData", "StripColorBalanceData"),
+    ("SequenceColorBalance", "StripColorBalance"),
+    ("SequenceCrop", "StripCrop"),
+    ("SequenceElement", "StripElement"),
+    ("SequenceElements", "StripElements"),
+    ("SequenceModifier", "StripModifier"),
+    ("SequenceModifiers", "StripModifiers"),
+    ("SequenceProxy", "StripProxy"),
+    ("SequenceTransform", "StripTransform"),
+    ("SequencesMeta", "StripsMeta"),
+    ("SequencesTopLevel", "StripsTopLevel"),
+    ("active_sequence_strip", "active_strip"),
+    ("selected_editable_sequences", "selected_editable_strips"),
+    ("selected_sequences", "selected_strips"),
+    ("context.sequences", "context.strips"),
+    #("sequences", "strips"),
+    ("SequenceEditor.sequences", "SequenceEditor.strips"),
+    ("SequenceEditor.sequences_all", "SequenceEditor.strips_all"),
+    ("MetaStrip.sequences", "MetaStrip.strips"),
+    ("align_x", "anchor_x"),
+    ("align_y", "anchor_y"),
+]
 #terms = str(TERMS).split('\n')
 #for t in terms:
 #    print('("' + t + '", ' + '"foo"),')

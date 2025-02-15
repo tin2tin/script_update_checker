@@ -3,7 +3,7 @@ from bpy.props import IntProperty, StringProperty, BoolProperty
 from bpy.types import Context, OperatorProperties
 
 from .fn import current_text
-from .terms import TERMS, TERMS_27, TERMS_ANNOTATIONS, TERMS_GP3
+from .terms import TERMS, TERMS_27, TERMS_ANNOTATIONS, TERMS_GP3, TERMS_SEQUENCER
 
 
 def check_files(txt) -> list:
@@ -26,6 +26,9 @@ def check_files(txt) -> list:
 
     if settings.check_gpv3:
         term_list += TERMS_GP3
+
+    if settings.sequencer:
+        term_list += TERMS_SEQUENCER
 
     suggestions = []
     txt = str(txt)
@@ -209,6 +212,10 @@ class TEXT_PGT_script_update_checker_settings(bpy.types.PropertyGroup) :
         name='Icons Name', default=True,
         description='Check icon name\
             \n(Should use the targeted Blender version for the script!)')
+
+    sequencer : BoolProperty(
+        name='Sequencer', default=True,
+        description='Rename from Sequence to Strip in Blender 4.4')
 
     auto_refresh : BoolProperty(
         name='Auto Refresh', default=True,

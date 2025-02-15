@@ -26,6 +26,7 @@ class TEXT_PT_show_update_ui(bpy.types.Panel):
         col.prop(settings, 'check_annotation', text='Properties To Annotation')
         col.prop(settings, 'check_gpv3', text='GPv2 to GPv3')
         col.prop(settings, 'check_icons', text='Icon Names')
+        col.prop(settings, 'sequencer', text='Sequencer')
 
         col.separator()
         col.label(text='Updates:')
