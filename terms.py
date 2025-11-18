@@ -331,6 +331,8 @@ TERMS_SEQUENCER = [
     ("MetaStrip.sequences", "MetaStrip.strips"),
     ("align_x", "anchor_x"),
     ("align_y", "anchor_y"),
+    ("sequencers.new", "strips.new"),
+    ("context.scene", "context.sequencer_scene"),
 ]
 #terms = str(TERMS).split('\n')
 #for t in terms:
